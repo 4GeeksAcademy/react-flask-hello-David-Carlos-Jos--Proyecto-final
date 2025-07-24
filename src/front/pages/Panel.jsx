@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 
-export const Home = () => {
+export const Panel = () => {
   const { store } = useGlobalReducer();
-  // Si ya está logueado, panel privado
-  if (store.user) return <Navigate to="/panel" />;
+  if (!store.user) return <Navigate to="/login" />; 
 
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,12 +14,9 @@ export const Home = () => {
     const fetchOffers = async () => {
       try {
         const backendUrl = import.meta.env.VITE_BACKEND_URL;
-        if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined");
-
-        const response = await fetch(`${backendUrl}/api/offers`);
-        if (!response.ok) throw new Error(`Error fetching offers: ${response.statusText}`);
-
-        const data = await response.json();
+        const res = await fetch(`${backendUrl}/api/offers`);
+        if (!res.ok) throw new Error(`Error: ${res.statusText}`);
+        const data = await res.json();
         setOffers(data);
       } catch (err) {
         setError(err.message);
@@ -35,7 +31,7 @@ export const Home = () => {
     <div className="container my-5">
       <div className="row gx-4">
 
-        {/* Preview de ofertas */}
+        {/* Preview igual que público */}
         <div className="col-md-8">
           <div className="bg-white p-4 rounded shadow-sm">
             <h2 className="text-success mb-3">Preview de ofertas</h2>
@@ -72,15 +68,15 @@ export const Home = () => {
             )}
 
             <div className="text-center mt-2">
-              <Link to="/login" className="btn btn-warning">Mostrar más</Link>
+              <Link to="/ofertas" className="btn btn-warning">Mostrar más</Link>
             </div>
           </div>
         </div>
 
-        {/* Comprar / Vender */}
+        {/* Comprar / Vender apuntan a rutas reales ahora */}
         <div className="col-md-4 d-flex flex-column justify-content-center align-items-center">
-          <Link to="/login" className="btn btn-success btn-lg w-75 mb-3">Comprar</Link>
-          <Link to="/login" className="btn btn-outline-success btn-lg w-75">Vender</Link>
+          <Link to="/comprar" className="btn btn-success btn-lg w-75 mb-3">Comprar</Link>
+          <Link to="/vender" className="btn btn-outline-success btn-lg w-75">Vender</Link>
         </div>
 
       </div>
