@@ -14,7 +14,7 @@ export const Panel = () => {
     const fetchOffers = async () => {
       try {
         const backendUrl = import.meta.env.VITE_BACKEND_URL;
-        const res = await fetch(`${backendUrl}/api/offers`);
+        const res = await fetch(`${backendUrl}/api/ofertas`);
         if (!res.ok) throw new Error(`Error: ${res.statusText}`);
         const data = await res.json();
         setOffers(data);

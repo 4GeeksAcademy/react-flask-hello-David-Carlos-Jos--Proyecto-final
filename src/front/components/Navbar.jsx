@@ -27,8 +27,8 @@ export const Navbar = () => {
           </div>
         ) : (
           <div className="ms-auto">
-            <Link className="btn btn-outline-success me-2" to="/login">Acceder</Link>
-            <Link className="btn btn-success" to="/register">Registrarse</Link>
+            <Link to="/Panel" className="btn btn-outline-success me-2">Acceder</Link>
+            <Link to="/register" className="btn btn-success">Registrarse</Link>
           </div>
         )}
       </div>

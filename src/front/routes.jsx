@@ -30,8 +30,8 @@ export const router = createBrowserRouter(
       <Route path="single/:theId" element={<Single />} />
 
         {/* Privadas */}
-      <Route path="panel" element={<Panel />} />
-      <Route path="perfil" element={<Perfil />} />
+      <Route path="/Panel" element={<Panel />} />
+      <Route path="/perfil" element={<Perfil />} />
     </Route>
   )
 );
