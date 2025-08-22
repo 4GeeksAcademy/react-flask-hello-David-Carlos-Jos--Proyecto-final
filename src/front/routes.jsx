@@ -9,7 +9,10 @@ import { Home } from "./pages/Home";
 import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
 import { Login } from "./pages/Login";
-import { Register } from "./pages/Register";
+import { Registro } from "./pages/Registro";
+import { BusquedaOfertas } from "./pages/BusquedaOfertas";
+import { OfertaId } from "./pages/OfertaId";
+import { ResetPassword } from "./pages/ResetPassword";
 
 
 export const router = createBrowserRouter(
@@ -19,7 +22,11 @@ export const router = createBrowserRouter(
             <Route path="/single/:theId" element={<Single />} />
             <Route path="/demo" element={<Demo />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/registro" element={<Registro />} />
+            <Route path="/busqueda" element={<BusquedaOfertas />} />
+            <Route path="/oferta/:id" element={<OfertaId />} />
+            <Route path="/resetPassword/:token" element={<ResetPassword/>} />
+            <Route path="/resetPassword/" element={<ResetPassword/>} />
         </Route>
     )
 );
