@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import { APIProvider, Map, AdvancedMarker } from '@vis.gl/react-google-maps';
 import { beautifulStyles } from "../styles/beautifulStyles";
+import {BorrarOfertasBoton} from "../components/BorrarOfertasBoton"
 
 export const OfertaId = () => {
   const { store } = useGlobalReducer();
@@ -12,9 +13,13 @@ export const OfertaId = () => {
 
   // Find the offer from the store using the ID from URL params
   const oferta = store.ofertas ? store.ofertas.find(offer => offer.id === parseInt(id)) : null;
+  console.log(store)
+  const token = localStorage.getItem("jwt_token");
+
 
   const handleContactClick = () => {
     const token = localStorage.getItem("jwt_token");
+    console.log(token)
     if (!token) {
       // Redirect to login if not authenticated
       window.location.href = "/login";
@@ -269,7 +274,9 @@ export const OfertaId = () => {
                       )}
 
                     </div>
-
+                      <div>
+                        <BorrarOfertasBoton id_oferta={oferta.id}/>
+                      </div>
                     <div className="col-md-4">
                       <div className="caracteristicas-tarjeta">
                         <h5 className="caracteristicas-titulo">
@@ -409,6 +416,11 @@ export const OfertaId = () => {
                     </p>
                   </div>
                 )}
+                {}
+                <div>
+
+
+                </div>
 
                 <div className="text-center mt-4">
                   <Link to="/" className="boton-principal">

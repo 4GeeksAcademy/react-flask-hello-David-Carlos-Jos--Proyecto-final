@@ -211,6 +211,24 @@ def comprar_oferta(oferta_id):
     return jsonify(oferta_serializada)
 
 
+@api.route("/user/oferta/vendedor/borrar/<int:oferta_id>", methods=["DELETE"])
+@jwt_required()
+def BorrarOfertas(oferta_id):
+    current_user = get_jwt_identity()
+    user = User.query.get(current_user)
+    if user is None:
+        return jsonify("Usuario no valido"),400
+    
+    oferta = Oferta.query.get(oferta_id)
+    if oferta is None:
+        return jsonify({"mensaje": "Oferta no encontrada"}), 404
+    if user.id != oferta.id_vendedor:
+        return jsonify({"mensaje": "No tienes permiso para borrar esta oferta"}), 403
+    
+    db.session.delete(oferta)
+    db.session.commit()
+    return jsonify({"mensaje":"Lo has borrado correctamente"}),200
+
 
 @api.route("/resetPassword", methods=['POST'])
 def resetPassword():
