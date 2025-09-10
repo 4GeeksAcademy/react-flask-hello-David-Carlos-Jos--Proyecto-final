@@ -300,19 +300,6 @@ export const Home = () => {
                         />
                       </div>
 
-                      <div className="grupo-campo" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <input
-                          name="esta_realizada"
-                          type="checkbox"
-                          checked={form.esta_realizada}
-                          onChange={handleChange}
-                          disabled={submitting}
-                          id="esta_realizada"
-                        />
-                        <label htmlFor="esta_realizada" className="etiqueta-campo" style={{ margin: 0 }}>
-                          ✅ <span>¿Está vendida?</span>
-                        </label>
-                      </div>
 
                       <button
                         type="submit"

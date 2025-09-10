@@ -8,6 +8,7 @@ import { beautifulStyles } from "../styles/beautifulStyles";
 export const BusquedaOfertas = () => {
   const { store, dispatch } = useGlobalReducer();
   const [offers, setOffers] = useState([]);
+  const [user, setUser] = useState(null); // ← CORREGIDO: null en lugar de []
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -21,6 +22,7 @@ export const BusquedaOfertas = () => {
     priceRange: { min: '', max: '' },
     productType: 'all',
     availableOnly: false,
+    creadasPorUser: false, // ← AGREGADO: propiedad faltante
     userLocation: null
   });
 
@@ -59,7 +61,9 @@ export const BusquedaOfertas = () => {
         }
         
         const data = await res.json();
+        console.log('Ofertas response:', data); // ← MEJORADO: más descriptivo
         setOffers(data.ofertas || []);
+        // ← ELIMINADO: console.log(offers) que mostraba valor anterior
       } catch (err) {
         console.error('Error fetching offers:', err);
         setError(err.message);
@@ -69,6 +73,47 @@ export const BusquedaOfertas = () => {
     };
     
     fetchOffers();
+  }, []);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("jwt_token");
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        const response = await fetch(`${backendUrl}api/user`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            localStorage.removeItem("jwt_token");
+            setError("Sesión expirada. Por favor, inicia sesión nuevamente.");
+            return;
+          }
+          const errorData = await response.json();
+          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('User response:', data); 
+        setUser(data.user || null);
+      } catch (err) {
+        console.error('Error fetching user:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchUser();
   }, []);
 
   const isValidCoordinate = (num) => {
@@ -203,9 +248,10 @@ export const BusquedaOfertas = () => {
       );
     }
 
-    // Filtro por disponibilidad
-    if (searchFilters.availableOnly) {
-      filtered = filtered.filter(offer => !offer.esta_realizada);
+    // ← CORREGIDO: Filtro por ofertas creadas por el usuario actual
+    if (searchFilters.creadasPorUser && user && user.id) {
+      // Si creadasPorUser es true, EXCLUIR las ofertas del usuario actual
+      filtered = filtered.filter(offer => offer.id_vendedor === user.id);
     }
 
     // Ordenamiento
@@ -258,7 +304,7 @@ export const BusquedaOfertas = () => {
     });
 
     return filtered;
-  }, [offers, searchFilters]);
+  }, [offers, searchFilters, user]); // ← CORREGIDO: agregué 'user' a dependencias
 
   // Función para actualizar filtros
   const updateFilter = (key, value) => {
@@ -279,7 +325,6 @@ export const BusquedaOfertas = () => {
     }));
   };
 
-
   const clearFilters = () => {
     setSearchFilters(prev => ({
       ...prev,
@@ -287,16 +332,14 @@ export const BusquedaOfertas = () => {
       sortBy: 'relevance',
       priceRange: { min: '', max: '' },
       productType: 'all',
-      availableOnly: false
+      creadasPorUser: false
     }));
   };
-
 
   const handleClick = (offer) => {
     return (e) => {
       e.preventDefault();
       
-
       const existeOferta = store.ofertas && store.ofertas.some(oferta => oferta.id === offer.id);
       
       if (!existeOferta) {
@@ -406,11 +449,11 @@ export const BusquedaOfertas = () => {
                   <label className="checkbox-label">
                     <input
                       type="checkbox"
-                      checked={searchFilters.availableOnly}
-                      onChange={(e) => updateFilter('availableOnly', e.target.checked)}
+                      checked={searchFilters.creadasPorUser}
+                      onChange={(e) => updateFilter('creadasPorUser', e.target.checked)}
                       className="filter-checkbox"
                     />
-                    <span className="checkbox-text">🟢 Solo disponibles</span>
+                    <span className="checkbox-text">✅ Solo mis ofertas</span>
                   </label>
                 </div>
 

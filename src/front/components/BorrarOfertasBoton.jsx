@@ -60,7 +60,7 @@ export const BorrarOfertasBoton = ({disabled = false, isLoading = false,id_ofert
 
             const data = await response.json();
             console.log(data)
-            navigate("/api/busqueda", { replace: true });
+            navigate("/busqueda");
         } catch (err) {
             console.error('Error submitting offer:', err);
         }
